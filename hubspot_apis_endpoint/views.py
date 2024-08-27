@@ -36,11 +36,10 @@ class ContactView(APIView):
             response = requests.post(HUBSPOT_API_ENDPOINT_CREATE_CONTACTS, json=contact_data, headers=headers)
 
             if response.status_code == 201:
-                print("Contact {data[email]} are created succesfully")
+
                 return Response({"message": "Contact created successfully"}, status=201)
 
             else:
-                print("Contact {data[email]} failled to created")
                 return Response({"error": response.json()}, status=response.status_code)
 
     
@@ -112,16 +111,13 @@ class AssociationView(APIView):
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
+            
             deal_name=request_body.get('dealname')
             contact_first_name=request_body.get('contact_first_name')
             contact_last_name=request_body.get('contact_last_name')
         
             deal_id=get_deal_id_by_name(deal_name,custom_headers=headers)
             contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers)
-            print(deal_name)
-            print(deal_id)
-            print(contact_id)
-        
             data = {
                 "inputs": [
                 {
