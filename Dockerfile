@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 ENV DockerHOME=/home/app/hubspot
-ENV HUBSPOT_TOKEN=
+ENV HUBSPOT_TOKEN=''
 ENV DEBUG=True
 ENV ALLOWED_HOSTS=*
 
