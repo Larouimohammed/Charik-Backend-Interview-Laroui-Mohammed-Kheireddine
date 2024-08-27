@@ -25,6 +25,8 @@ class ContactView(APIView):
             request_body=request.data
             request_body_serialized = ContactSerializer(data=request_body)
             if not request_body_serialized.is_valid():
+                print(request_body_serialized.error_messages)
+                # pass
                 return Response(request_body, status.HTTP_400_BAD_REQUEST)
 
             contact_data={

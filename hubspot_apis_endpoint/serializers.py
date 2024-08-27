@@ -5,8 +5,8 @@ from .models import Contact,Deal,Association
 class ContactSerializer(serializers.Serializer):
     
     email = serializers.EmailField(required=True)
-    contact_first_name = serializers.CharField(max_length=100,required=True)
-    contact_last_name = serializers.CharField(max_length=100)
+    firstname = serializers.CharField(max_length=100,required=True)
+    lastname = serializers.CharField(max_length=100)
     
     class Meta:
         model = Contact

@@ -1,3 +1,4 @@
+import requests
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -6,7 +7,7 @@ from rest_framework import status
 url = "http://localhost:8000/apis/contact/"
 
 
-from django.urls import reverse
+# from django.urls import reverse
 
 class ContactAPITestCase(TestCase):
     def test_create_contact(self):
@@ -18,6 +19,6 @@ class ContactAPITestCase(TestCase):
         }
         
         # contact_serialized= 
-        response = self.client.post(url, data, format='json')
+        response = requests.post(url, data, format='json')
         # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['email'], data['email'])
