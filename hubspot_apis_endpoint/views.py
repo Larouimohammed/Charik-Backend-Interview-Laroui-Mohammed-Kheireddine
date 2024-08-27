@@ -4,15 +4,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .utils import get_contact_id_by_name,get_deal_id_by_name,get_all_contacts,get_deals_for_contact
 
+
+# Hubspot APIS Endpoint 
+
 HUBSPOT_API_ENDPOINT_CREATE_CONTACTS = "https://api.hubapi.com/crm/v3/objects/contacts"
-
 HUBSPOT_API_ENDPOINT_CREATE_DEALS="https://api.hubapi.com/crm/v3/objects/deals"
-
 HUBSPOT_API_ENDPOINT_ASSOCIATE_CONTACT_DEALS ="https://api.hubapi.com/crm/v3/associations/deal/contact/batch/create"
 
 
+# Views Api handler 
 class ContactView(APIView):
     
+    # create contact
     def post(self, request):  
         if request.method == 'POST':
             headers = {
@@ -45,7 +48,7 @@ class ContactView(APIView):
     
         return Response({"error": "Invalid request method"}, status=400)
   
-    
+    # get lsit of all contact with associated deals
     def get(self,request):
         if request.method == 'GET':
             headers = {
@@ -75,9 +78,10 @@ class ContactView(APIView):
                 return Response({"error": str(e)}, status=500)
           
 
- 
+# Deals view handler 
 class DealView(APIView):
-        
+     
+    # create delas  
     def post(self, request):  
         
         if request.method == 'POST':
@@ -100,9 +104,9 @@ class DealView(APIView):
 
         return Response({"error": "Invalid request method"}, status=400)
     
-
+# Association views handler
 class AssociationView(APIView):
-
+    # associate contact with deals
     def post(self, request):  
     
         if request.method == 'POST':
