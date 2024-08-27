@@ -1,19 +1,27 @@
 import requests,json 
-from django.shortcuts import render
 from django.conf import settings
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .utils import get_contact_id_by_name,get_deal_id_by_name,get_all_contacts,get_deals_for_contact
 
+HUBSPOT_API_ENDPOINT_CREATE_CONTACTS = "https://api.hubapi.com/crm/v3/objects/contacts"
 
-def create_contact(request):
-    if request.method == 'POST':
-        url = "https://api.hubapi.com/crm/v3/objects/contacts"
-        headers = {
+HUBSPOT_API_ENDPOINT_CREATE_DEALS="https://api.hubapi.com/crm/v3/objects/deals"
+
+HUBSPOT_API_ENDPOINT_ASSOCIATE_CONTACT_DEALS ="https://api.hubapi.com/crm/v3/associations/deal/contact/batch/create"
+
+
+class ContactView(APIView):
+    
+    def post(self, request):  
+        if request.method == 'POST':
+            headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
-        }
-        request_body = json.loads(request.body)
-        contact_data={
+            }
+            request_body = json.loads(request.body)
+            
+            contact_data={
             "properties": {
                     "email": request_body.get('email'),
                     "firstname": request_body.get('firstname'),
@@ -23,64 +31,99 @@ def create_contact(request):
                     "company": request_body.get('company'),
                     "website": request_body.get('website'),
                 }
-        }
+            
+            }
+            response = requests.post(HUBSPOT_API_ENDPOINT_CREATE_CONTACTS, json=contact_data, headers=headers)
 
-        response = requests.post(url, json=contact_data, headers=headers)
+            if response.status_code == 201:
+                print("Contact {data[email]} are created succesfully")
+                return Response({"message": "Contact created successfully"}, status=201)
 
-        if response.status_code == 201:
-            print("Contact {data[email]} are created succesfully")
-            return JsonResponse({"message": "Contact created successfully"}, status=201)
-        else:
-            print("Contact {data[email]} failled to created")
-            return JsonResponse({"error": response.json()}, status=response.status_code)
+            else:
+                print("Contact {data[email]} failled to created")
+                return Response({"error": response.json()}, status=response.status_code)
+
     
-    return JsonResponse({"error": "Invalid request method"}, status=400)
- 
-        
-        
-def create_deal(request):
-    if request.method == 'POST':
-        request_body = json.loads(request.body)
-        url = "https://api.hubapi.com/crm/v3/objects/deals"
-        headers = {
+        return Response({"error": "Invalid request method"}, status=400)
+  
+    
+    def get(self,request):
+        if request.method == 'GET':
+            headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
-        }
-        deal_data = {
+            }
+            try:
+                contacts = get_all_contacts(custom_headers=headers)
+        
+                contacts_with_deals = []
+            
+                for contact in contacts:
+                    contact_id = contact.get('id')
+                    deals = get_deals_for_contact(contact_id,custom_headers=headers)
+                    contact_data = {
+                    "contact_id": contact_id,
+                    "firstname": contact.get('properties', {}).get('firstname'),
+                    "lastname": contact.get('properties', {}).get('lastname'),
+                    "email": contact.get('properties', {}).get('email'),
+                    "deals": deals
+                    }
+                    contacts_with_deals.append(contact_data)
+                
+                return Response(contacts_with_deals, status=200)
+        
+            except Exception as e:
+                return Response({"error": str(e)}, status=500)
+          
+
+ 
+class DealView(APIView):
+        
+    def post(self, request):  
+        
+        if request.method == 'POST':
+            request_body = json.loads(request.body)
+            headers = {
+                "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
+                "Content-Type": "application/json"
+            }
+            deal_data = {
             "properties": {
                 "dealname": request_body.get('dealname'),
+                }
             }
-        }
-        response = requests.post(url, json=deal_data, headers=headers)
+            response = requests.post(HUBSPOT_API_ENDPOINT_CREATE_DEALS, json=deal_data, headers=headers)
 
-        if response.status_code == 201:
-            return JsonResponse({"message": "Deal created successfully"})
-        else:
-            return JsonResponse({"error": response.json()}, status=response.status_code)
+            if response.status_code == 201:
+                return Response({"message": "Deal created successfully"})
+            else:
+                return Response({"error": response.json()}, status=response.status_code)
 
-    return JsonResponse({"error": "Invalid request method"}, status=400)
+        return Response({"error": "Invalid request method"}, status=400)
     
+
+class AssociationView(APIView):
+
+    def post(self, request):  
     
-def contact_deal_associate(request):
-    if request.method == 'POST':
-        request_body = json.loads(request.body)
-        url = "https://api.hubapi.com/crm/v3/associations/deal/contact/batch/create"
-        headers = {
+        if request.method == 'POST':
+            request_body = json.loads(request.body)
+            headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
-        }
-        deal_name=request_body.get('dealname')
-        contact_first_name=request_body.get('contact_first_name')
-        contact_last_name=request_body.get('contact_last_name')
+            }
+            deal_name=request_body.get('dealname')
+            contact_first_name=request_body.get('contact_first_name')
+            contact_last_name=request_body.get('contact_last_name')
         
-        deal_id=get_deal_id_by_name(deal_name,custom_headers=headers)
-        contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers)
-        print(deal_name)
-        print(deal_id)
-        print(contact_id)
+            deal_id=get_deal_id_by_name(deal_name,custom_headers=headers)
+            contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers)
+            print(deal_name)
+            print(deal_id)
+            print(contact_id)
         
-        data = {
-            "inputs": [
+            data = {
+                "inputs": [
                 {
                     "from": {
                         "id": deal_id
@@ -91,45 +134,16 @@ def contact_deal_associate(request):
                     "type": "deal_to_contact" 
                 }
             ]
-        }
-        response = requests.post(url, json=data, headers=headers)
+            }
+            response = requests.post(HUBSPOT_API_ENDPOINT_ASSOCIATE_CONTACT_DEALS, json=data, headers=headers)
 
-        if response.status_code == 201:
-            return JsonResponse({"message": "Deal and Contact are Associated"})
-        else:
-            return JsonResponse({"error": response.json()}, status=response.status_code)
+            if response.status_code == 201:
+                return Response({"message": "Deal and Contact are Associated"})
+            else:
+                return Response({"error": response.json()}, status=response.status_code)
 
-    return JsonResponse({"error": "Invalid request method"}, status=400)
+        return Response({"error": "Invalid request method"}, status=400)
 
-
-
-def list_contacts_associated_with_deals(request):
-    if request.method == 'GET':
-        headers = {
-            "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
-            "Content-Type": "application/json"
-        }
-        try:
-            contacts = get_all_contacts(custom_headers=headers)
-        
-            contacts_with_deals = []
-            
-            for contact in contacts:
-                contact_id = contact.get('id')
-                deals = get_deals_for_contact(contact_id,custom_headers=headers)
-                contact_data = {
-                    "contact_id": contact_id,
-                    "firstname": contact.get('properties', {}).get('firstname'),
-                    "lastname": contact.get('properties', {}).get('lastname'),
-                    "email": contact.get('properties', {}).get('email'),
-                    "deals": deals
-                }
-                contacts_with_deals.append(contact_data)
-                
-            return JsonResponse(contacts_with_deals, status=200,safe=False)
-        
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
 
 
 
