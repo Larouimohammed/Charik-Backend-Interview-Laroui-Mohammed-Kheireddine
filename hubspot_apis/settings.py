@@ -33,7 +33,6 @@ load_dotenv()
 
 HUBSPOT_TOKEN = os.getenv('HUBSPOT_TOKEN')
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 debug_mode = os.getenv('DEBUG_MODE')
 DEBUG = debug_mode
