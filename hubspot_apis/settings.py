@@ -31,8 +31,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
-hubspot_api_key = os.getenv('HUBSPOT_TOKEN')
-HUBSPOT_TOKEN = hubspot_api_key
+HUBSPOT_TOKEN = os.getenv('HUBSPOT_TOKEN')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 debug_mode = os.getenv('DEBUG_MODE')
