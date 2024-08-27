@@ -1,7 +1,8 @@
 from hubspot_apis_endpoint import views
 from django.urls import path
 
-# Our url endpoint apis 
+
+# Our apis url endpoint 
 
 urlpatterns = [
     path('contact/', views.ContactView.as_view(), name='create_contact'),

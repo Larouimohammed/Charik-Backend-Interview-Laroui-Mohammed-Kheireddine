@@ -1,9 +1,8 @@
 import requests,json 
 from django.conf import settings
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.views import APIView,Response,status
 from .utils import get_contact_id_by_name,get_deal_id_by_name,get_all_contacts,get_deals_for_contact
-
+from .serializers import ContactSerializer,DealSerializer,AssociationSerializer
 
 # Hubspot APIS Endpoint 
 
@@ -15,17 +14,19 @@ CONTACTS_FILTER_ENDPOINT = "https://api.hubapi.com/crm/v3/objects/contacts/searc
 
 
 # Views Api handler 
+
 class ContactView(APIView):
-    
     # create contact
     def post(self, request):  
-        if request.method == 'POST':
             headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
-            request_body = json.loads(request.body)
-            
+            request_body=request.data
+            request_body_serialized = ContactSerializer(data=request_body)
+            if not request_body_serialized.is_valid():
+                return Response(request_body, status.HTTP_400_BAD_REQUEST)
+
             contact_data={
             "properties": {
                     "email": request_body.get('email'),
@@ -42,17 +43,16 @@ class ContactView(APIView):
 
             if response.status_code == 201:
 
-                return Response({"message": "Contact created successfully"}, status=201)
+                return Response({"message": "Contact created successfully"},status.HTTP_201_CREATED)
 
             else:
-                return Response({"error": response.json()}, status=response.status_code)
+                return Response({"error": response.json()},  status.HTTP_400_BAD_REQUEST)
+  
 
     
-        return Response({"error": "Invalid request method"}, status=400)
-  
+        
     # get lsit of all contact with associated deals
     def get(self,request):
-        if request.method == 'GET':
             headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
@@ -74,10 +74,10 @@ class ContactView(APIView):
                     }
                     contacts_with_deals.append(contact_data)
                 
-                return Response(contacts_with_deals, status=200)
+                return Response(contacts_with_deals, status.HTTP_200_OK)
         
             except Exception as e:
-                return Response({"error": str(e)}, status=500)
+                return Response({"error": str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
           
 
 # Deals view handler 
@@ -85,13 +85,16 @@ class DealView(APIView):
      
     # create delas  
     def post(self, request):  
-        
-        if request.method == 'POST':
             request_body = json.loads(request.body)
             headers = {
                 "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
                 "Content-Type": "application/json"
             }
+            request_body=request.data
+            deal_body_serialized = DealSerializer(data=request_body)
+            if not deal_body_serialized.is_valid():
+                return Response(request_body, status.HTTP_400_BAD_REQUEST)
+            
             deal_data = {
             "properties": {
                 "dealname": request_body.get('dealname'),
@@ -104,20 +107,21 @@ class DealView(APIView):
             else:
                 return Response({"error": response.json()}, status=response.status_code)
 
-        return Response({"error": "Invalid request method"}, status=400)
     
 # Association views handler
 class AssociationView(APIView):
     # associate contact with deals
     def post(self, request):  
     
-        if request.method == 'POST':
             request_body = json.loads(request.body)
             headers = {
             "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
-            
+            request_body=request.data
+            association_body_serialized = AssociationSerializer(data=request_body)
+            if not association_body_serialized.is_valid():
+                return Response(request_body, status.HTTP_400_BAD_REQUEST)
             deal_name=request_body.get('dealname')
             contact_first_name=request_body.get('contact_first_name')
             contact_last_name=request_body.get('contact_last_name')
@@ -140,11 +144,10 @@ class AssociationView(APIView):
             response = requests.post(HUBSPOT_API_ENDPOINT_ASSOCIATE_CONTACT_DEALS, json=data, headers=headers)
 
             if response.status_code == 201:
-                return Response({"message": "Deal and Contact are Associated"})
+                return Response({"message": "Deal and Contact are Associated"},status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": response.json()}, status=response.status_code)
 
-        return Response({"error": "Invalid request method"}, status=400)
 
 
 

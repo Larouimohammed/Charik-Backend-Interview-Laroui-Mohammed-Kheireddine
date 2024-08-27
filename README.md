@@ -1,4 +1,5 @@
 # Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
+
 DRF integration with HubSpot
 
 # Introduction :
@@ -31,13 +32,14 @@ integradtion with this third party crm soulution using django rest api calls tha
 
         curl -X POST -H "Content-Type: application/json" -d '{"email": "m.laroui@esi-sba.dz", "firstname": "Laroui","lastname" :"Mohammed Kheireddine"}' http://localhost:8000/apis/contact/
 
-##  create deal 
+## Create deal 
+        
         curl -X POST -H "Content-Type: application/json" -d '{"dealname":"Deal - Laroui Mohammed Kheireddine"}' http://localhost:8000/apis/deal/
 
-## associate contact with deal
+## Associate contact with deal
 
         curl -X POST -H "Content-Type: application/json" -d '{"dealname":"Deal - Laroui Mohammed Kheireddine","contact_first_name":"Laroui","contact_last_name":"Mohammed Kheireddine"}' http://localhost:8000/apis/associate/
 
-##  list all contact with associated deals
+## List all contact with associated deals
 
         curl -X GET http://localhost:8000/apis/list/        
