@@ -15,6 +15,8 @@ integradtion with this third party crm soulution using django rest api calls tha
     export  IMAGE_TAG='image_tag_name'
 
     git clone https://github.com/Larouimohammed/Charik-Backend-Interview-Laroui-Mohammed-Kheireddine.git
+
+    cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
     
     docker build  .  -t hubspot-apis-v1
 
