@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 import requests
 
-def get_deal_id_by_name(deal_name,custom_headers):
-        url = "https://api.hubapi.com/crm/v3/objects/deals/search"
+
+
+# function helper for get deal name by deal id
+def get_deal_id_by_name(deal_name,custom_headers,url):
         search_payload = {
             "filterGroups": [
                 {
@@ -31,9 +33,10 @@ def get_deal_id_by_name(deal_name,custom_headers):
         else:
             error_detail = response.json()
             raise Exception(f"Error fetching deal: {error_detail}")
+        
+# function helper for get contact name by contact id
 
-def get_contact_id_by_name(first_name,last_name,custom_headers):
-        url = "https://api.hubapi.com/crm/v3/objects/contacts/search"
+def get_contact_id_by_name(first_name,last_name,custom_headers,url):
         search_payload = {
             "filterGroups": [{
                 "filters": [
@@ -56,8 +59,10 @@ def get_contact_id_by_name(first_name,last_name,custom_headers):
                 return JsonResponse({"error": "Contact not found"}, status=404)
         else:
             return JsonResponse({"error": "Failed to search for contact", "details": response.json()}, status=response.status_code)
-        
-        
+  
+  
+# function helper for get all contact
+      
 def get_all_contacts(custom_headers):
         url = "https://api.hubapi.com/crm/v3/objects/contacts"
         contacts = []
@@ -71,6 +76,9 @@ def get_all_contacts(custom_headers):
                 raise Exception(f"Error fetching contacts: {response.json()}")
             
         return contacts
+
+
+# function helper to get deal for specific contact_id
 
 def get_deals_for_contact(contact_id,custom_headers):
         url = f'https://api.hubapi.com/crm/v3/objects/contacts/{contact_id}/associations/deals'

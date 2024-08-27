@@ -10,6 +10,8 @@ from .utils import get_contact_id_by_name,get_deal_id_by_name,get_all_contacts,g
 HUBSPOT_API_ENDPOINT_CREATE_CONTACTS = "https://api.hubapi.com/crm/v3/objects/contacts"
 HUBSPOT_API_ENDPOINT_CREATE_DEALS="https://api.hubapi.com/crm/v3/objects/deals"
 HUBSPOT_API_ENDPOINT_ASSOCIATE_CONTACT_DEALS ="https://api.hubapi.com/crm/v3/associations/deal/contact/batch/create"
+DEALS_FILTER_ENDPOINT = "https://api.hubapi.com/crm/v3/objects/deals/search"
+CONTACTS_FILTER_ENDPOINT = "https://api.hubapi.com/crm/v3/objects/contacts/search"
 
 
 # Views Api handler 
@@ -120,8 +122,8 @@ class AssociationView(APIView):
             contact_first_name=request_body.get('contact_first_name')
             contact_last_name=request_body.get('contact_last_name')
         
-            deal_id=get_deal_id_by_name(deal_name,custom_headers=headers)
-            contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers)
+            deal_id=get_deal_id_by_name(deal_name,custom_headers=headers,url=DEALS_FILTER_ENDPOINT)
+            contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers,url=CONTACTS_FILTER_ENDPOINT)
             data = {
                 "inputs": [
                 {
