@@ -27,7 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-9=eac7ehbxf17%d_a0-+5mh-+xn+wib64ocm+7a5$gkftd5v2s'
 
-# HUBSPOT_TOKEN = 'pat-eu1-bbf80206-9d6a-4d6e-9112-fa7b60e6cbd6'
 
 load_dotenv()
 
