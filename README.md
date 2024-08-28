@@ -10,36 +10,32 @@ integradtion with this third party crm soulution using django rest api calls tha
 # Setup: 
     
     #after successfully creating Private App in hubspot copy your Token and export then as env var .
-    
+ 
     export  YOUR_HUBSPOT_TOKEN='past_your_token_here'
-    
-    export  IMAGE_TAG='image_tag_name'
-
+    export  IMAGE_TAG='hubspot-apis-v1'
     git clone https://github.com/Larouimohammed/Charik-Backend-Interview-Laroui-Mohammed-Kheireddine.git
-
     cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
-    
-    docker build  .  -t hubspot-apis-v1
-
-    docker run -it -d -p 8000:8000 -e HUBSPOT_TOKEN=$YOUR_HUBSPOT_TOKEN  $IMAGE_TAG
-
+    python3 manage.py test
+    docker build  .  -t $IMAGE_TAG
+    docker run -it -d --network host  -e HUBSPOT_TOKEN='pat-eu1-bbf80206-9d6a-4d6e-9112-fa7b60e6cbd6'  
+        $IMAGE_TAG
 
 # Test :
    
         sudo apt update -y && sudo apt upgrade -y && sudo apt install curl -y
 
-## create Contact 
+### Create Contact 
 
         curl -X POST -H "Content-Type: application/json" -d '{"email": "m.laroui@esi-sba.dz", "firstname": "Laroui","lastname" :"Mohammed Kheireddine"}' http://localhost:8000/apis/contact/
 
-## Create deal 
+### Create Deal 
         
         curl -X POST -H "Content-Type: application/json" -d '{"dealname":"Deal - Laroui Mohammed Kheireddine"}' http://localhost:8000/apis/deal/
 
-## Associate contact with deal
+### Associate Contact with deals
 
         curl -X POST -H "Content-Type: application/json" -d '{"dealname":"Deal - Laroui Mohammed Kheireddine","contact_first_name":"Laroui","contact_last_name":"Mohammed Kheireddine"}' http://localhost:8000/apis/associate/
 
-## List all contact with associated deals
+### List all Contacts with Associated Deals
 
         curl -X GET http://localhost:8000/apis/list/        

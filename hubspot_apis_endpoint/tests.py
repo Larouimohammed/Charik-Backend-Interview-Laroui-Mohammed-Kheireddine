@@ -5,10 +5,9 @@ from rest_framework import status
 
 class ContactAPITestCase(TestCase):
     def test_create_contact(self):
-        
         url = "http://localhost:8000/apis/contact/"
         
-        data= {"email": "finaltest5@gmail.com","firstname":"test", "lastname":"test"}
+        data= {"email": "finaltest9@gmail.com","firstname":"test", "lastname":"test"}
         
         session = requests.Session()
         
