@@ -21,9 +21,10 @@ integradtion with this third party crm soulution using django rest api calls tha
 - export  IMAGE_TAG='hubspot-apis-v1'
 - git clone https://github.com/Larouimohammed/Charik-Backend-Interview-Laroui-Mohammed-Kheireddine.git
 - cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
-- python3 manage.py test
 - docker build  .  -t $IMAGE_TAG
 - docker run -it -d --network host  -e HUBSPOT_TOKEN=$YOUR_HUBSPOT_TOKEN $IMAGE_TAG
+- python3 manage.py test
+
 
 # Test :
    
