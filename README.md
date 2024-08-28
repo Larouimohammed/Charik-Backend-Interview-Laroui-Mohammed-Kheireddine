@@ -15,7 +15,7 @@ integradtion with this third party crm soulution using django rest api calls tha
 
 # Setup: 
     
-### after successfully creating Private App in hubspot copy your Token and export then as env var .
+### after successfully creating Private App in hubspot copy your Token and export then as env var  follow this easy steps to get your djnago web server ready .
  
 - export  YOUR_HUBSPOT_TOKEN='past_your_token_here'
 - export  IMAGE_TAG='hubspot-apis-v1'
