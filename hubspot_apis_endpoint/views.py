@@ -1,5 +1,5 @@
 import requests,json 
-from django.conf import settings
+from hubspot_apis.settings import HUBSPOT_TOKEN
 from rest_framework.views import APIView,Response,status
 from .utils import get_contact_id_by_name,get_deal_id_by_name,get_all_contacts,get_deals_for_contact
 from .serializers import ContactSerializer,DealSerializer,AssociationSerializer
@@ -13,13 +13,13 @@ DEALS_FILTER_ENDPOINT = "https://api.hubapi.com/crm/v3/objects/deals/search"
 CONTACTS_FILTER_ENDPOINT = "https://api.hubapi.com/crm/v3/objects/contacts/search"
 
 
-# Views Api handler 
 
+# Views Api handler 
 class ContactView(APIView):
     # create contact
-    def post(self, request):  
+    def post(self, request): 
             headers = {
-            "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
+            "Authorization": f"Bearer {HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
             request_body=request.data
@@ -45,7 +45,7 @@ class ContactView(APIView):
 
             if response.status_code == 201:
 
-                return Response({"message": "Contact created successfully"},status.HTTP_201_CREATED)
+                return Response({"message": response.json()},status.HTTP_201_CREATED)
 
             else:
                 return Response({"error": response.json()},  status.HTTP_400_BAD_REQUEST)
@@ -56,7 +56,7 @@ class ContactView(APIView):
     # get lsit of all contact with associated deals
     def get(self,request):
             headers = {
-            "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
+            "Authorization": f"Bearer {HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
             try:
@@ -89,7 +89,7 @@ class DealView(APIView):
     def post(self, request):  
             request_body = json.loads(request.body)
             headers = {
-                "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
+                "Authorization": f"Bearer {HUBSPOT_TOKEN}",
                 "Content-Type": "application/json"
             }
             request_body=request.data
@@ -105,7 +105,7 @@ class DealView(APIView):
             response = requests.post(HUBSPOT_API_ENDPOINT_CREATE_DEALS, json=deal_data, headers=headers)
 
             if response.status_code == 201:
-                return Response({"message": "Deal created successfully"})
+                return Response({"message": response.json()})
             else:
                 return Response({"error": response.json()}, status=response.status_code)
 
@@ -117,7 +117,7 @@ class AssociationView(APIView):
     
             request_body = json.loads(request.body)
             headers = {
-            "Authorization": f"Bearer {settings.HUBSPOT_TOKEN}",
+            "Authorization": f"Bearer {HUBSPOT_TOKEN}",
             "Content-Type": "application/json"
             }
             request_body=request.data
@@ -127,7 +127,7 @@ class AssociationView(APIView):
             deal_name=request_body.get('dealname')
             contact_first_name=request_body.get('contact_first_name')
             contact_last_name=request_body.get('contact_last_name')
-        
+            # Those 2 function helpe us to retrieve name of contact and deal by him ids and they are described in utils.py module at current path
             deal_id=get_deal_id_by_name(deal_name,custom_headers=headers,url=DEALS_FILTER_ENDPOINT)
             contact_id=get_contact_id_by_name(first_name=contact_first_name,last_name=contact_last_name,custom_headers=headers,url=CONTACTS_FILTER_ENDPOINT)
             data = {
