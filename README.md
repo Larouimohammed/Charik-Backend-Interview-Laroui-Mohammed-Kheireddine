@@ -7,17 +7,23 @@
 HubSpot is powerfull open-source crm platefrome and this package is DRF (django rest framework) 
 integradtion with this third party crm soulution using django rest api calls that can help entreprise to easaly afect CRUD opration to exisiting APPS and offre more custimisation and facilitate ressource management . 
 
+# Features
+ - Create a contact in Hubspot PrivateApps .
+ - Create a Deal in Hubspot PrivateApps .
+ - Associate contact With Deal .
+ - List all Contact With Assscoiated Deals.
+
 # Setup: 
     
-    #after successfully creating Private App in hubspot copy your Token and export then as env var .
+### after successfully creating Private App in hubspot copy your Token and export then as env var .
  
-    export  YOUR_HUBSPOT_TOKEN='past_your_token_here'
-    export  IMAGE_TAG='hubspot-apis-v1'
-    git clone https://github.com/Larouimohammed/Charik-Backend-Interview-Laroui-Mohammed-Kheireddine.git
-    cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
-    python3 manage.py test
-    docker build  .  -t $IMAGE_TAG
-    docker run -it -d --network host  -e HUBSPOT_TOKEN='pat-eu1-bbf80206-9d6a-4d6e-9112-fa7b60e6cbd6'  
+- export  YOUR_HUBSPOT_TOKEN='past_your_token_here'
+- export  IMAGE_TAG='hubspot-apis-v1'
+- git clone https://github.com/Larouimohammed/Charik-Backend-Interview-Laroui-Mohammed-Kheireddine.git
+- cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
+- python3 manage.py test
+- docker build  .  -t $IMAGE_TAG
+- docker run -it -d --network host  -e HUBSPOT_TOKEN='pat-eu1-bbf80206-9d6a-4d6e-9112-fa7b60e6cbd6'  
         $IMAGE_TAG
 
 # Test :
