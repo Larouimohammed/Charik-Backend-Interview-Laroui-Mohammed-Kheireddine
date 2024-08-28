@@ -23,8 +23,7 @@ integradtion with this third party crm soulution using django rest api calls tha
 - cd Charik-Backend-Interview-Laroui-Mohammed-Kheireddine
 - python3 manage.py test
 - docker build  .  -t $IMAGE_TAG
-- docker run -it -d --network host  -e HUBSPOT_TOKEN=$YOUR_HUBSPOT_TOKEN
-        $IMAGE_TAG
+- docker run -it -d --network host  -e HUBSPOT_TOKEN=$YOUR_HUBSPOT_TOKEN $IMAGE_TAG
 
 # Test :
    
